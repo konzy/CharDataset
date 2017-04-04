@@ -47,8 +47,11 @@ font_sizes = (48, 52, 56, 64)
 image_size = 256
 
 # Images per font file
-num_images = 30
+num_images = 10
 
+# Colors, gray on white (the fill for fonts are messed up)
+font_color = 120
+background_color = 255
 # ------------------------------------ Cleanup ----------------------------------#
 
 # def Cleanup():
@@ -59,9 +62,9 @@ num_images = 30
 # ------------------------------ Generate Characters ----------------------------#
 
 
-def generate_characters(char_start, char_end, script_name):
+def generate_characters(char_start, char_end, font_folder, destination_folder):
     # Process the font files
-    for dir_name, dir_names, file_names in os.walk(font_dir + "/" + script_name + "/"):
+    for dir_name, dir_names, file_names in os.walk(font_dir + "/" + font_folder + "/"):
         # For each font do
         for filename in file_names:
             # Get font full file path
@@ -90,19 +93,21 @@ def generate_characters(char_start, char_end, script_name):
                         valid_unicode = False
 
                     if valid_unicode:
-                        draw_character(character, font_resource_file, font_size, script_name, filename)
+                        draw_character(character, font_resource_file, font_size, filename,
+                                       font_folder, destination_folder)
 
-    print script_name + " is finished."
+    print destination_folder + "/" + font_folder + " is finished."
     return
 
 
-def draw_character(char, font_resource_file, font_size, script_name, filename):
+def draw_character(char, font_resource_file, font_size, filename, font_folder, destination_folder):
     if type(char) is int:
         character = unichr(char)
     else:
         character = char
     # Convert the character into unicode
-    background_color = randint(0, 255)
+    # background_color = randint(0, 255)
+
     # Create character image :
     # Grayscale, image size, background color
     char_image = Image.new('L', (image_size, image_size), background_color)
@@ -114,10 +119,12 @@ def draw_character(char, font_resource_file, font_size, script_name, filename):
 
     # Draw text : Position, String,
     # Options = Fill color, Font
+
     img2 = Image.new('L', (font_width, font_height), background_color)
     draw2 = ImageDraw.Draw(img2)
-    font_color = (background_color + randint(75, 125)) % 255
-    draw2.text((0, 0), character, font_color, font=font)
+    # font_color = (background_color + randint(50, 100)) % 255
+
+    draw2.text((0, 0), character, fill=font_color, font=font)
     w = img2.rotate(randint(-25, 25), expand=1)
     width, height = w.size
 
@@ -127,7 +134,7 @@ def draw_character(char, font_resource_file, font_size, script_name, filename):
     y = randint(0, image_size - height - 10)
 
     # Final file name
-    file_name = out_dir + "/" + script_name + "/" + character + '_' + \
+    file_name = out_dir + "/" + destination_folder + "/" + font_folder + "/" + character + '_' + \
         filename + '_fs_' + \
         str(font_size) + '_bc_' + \
         str(background_color) + '_fc_' + str(font_color) + '.png'
@@ -156,10 +163,10 @@ def copy_files(source, destination_1, destination_2):
 
 # Generate characters
 random.seed(21215)
-# generate_characters(english[2], english[3], "englishTest")
-# generate_characters(english[4], english[5], "englishVal")
-generate_characters(kannada[1], kannada[2], "kannadaTest")
-generate_characters(kannada[3], kannada[4], "kannadaVal")
+generate_characters(english[2], english[3], "english", "test")
+generate_characters(english[4], english[5], "english", "validation")
+# generate_characters(kannada[1], kannada[2], "kannada", "test")
+# generate_characters(kannada[3], kannada[4], "kannada", "validation")
 
 
 __author__ = 'hensleyl4'
